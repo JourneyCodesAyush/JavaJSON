@@ -9,6 +9,9 @@ import static io.github.journeycodesayush.javajson.lexer.TokenType.*;
 
 public class Lexer {
 
+    public static class LexerError extends RuntimeException {
+    }
+
     private final String source;
     private final List<Token> tokens = new ArrayList<>();
     private int start = 0;
@@ -90,13 +93,13 @@ public class Lexer {
                 if (isDigit(c))
                     number();
                 else if (isAlphaNumeric(c)) {
-                    identifier();
+                    literalKeyword();
                 }
             }
         }
     }
 
-    private void identifier() {
+    private void literalKeyword() {
         while (isAlphaNumeric(peek()))
             advance();
 
@@ -104,7 +107,7 @@ public class Lexer {
         TokenType type = keywords.get(text);
 
         if (type == null)
-            return;
+            throw error("Unidentified identifier.");
         addToken(type);
     }
 
@@ -121,6 +124,11 @@ public class Lexer {
         advance();
         String value = source.substring(start + 1, current - 1);
         addToken(STRING, value);
+    }
+
+    private LexerError error(String message) {
+        System.out.println(message);
+        throw new LexerError();
     }
 
     private char advance() {
