@@ -1,5 +1,6 @@
 # Java
 *.class
+*.jar
 
 # JavaDoc (generated)
 docs/
