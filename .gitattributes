@@ -1,0 +1,22 @@
+# Treat all text files normally
+* text=auto eol=lf
+
+# Explicitly mark source code as text
+*.java text
+*.txt text
+*.md text
+
+# Treat shell scripts
+*.sh text
+
+# Binary files (don’t touch line endings)
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.class binary
+*.jar binary
+*.exe binary
+*.zip binary
