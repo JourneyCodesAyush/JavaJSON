@@ -1,0 +1,16 @@
+# Java
+*.class
+
+# JavaDoc (generated)
+docs/
+
+# Maven generated directory
+target/
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+
+# Others
+.DS_Store
