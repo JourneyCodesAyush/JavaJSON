@@ -20,32 +20,43 @@ public class JsonAstPrinter implements JsonValue.Visitor<String> {
 
     @Override
     public String visitJsonArray(JsonArray jsonvalue) {
+        if (jsonvalue.elements().isEmpty())
+            return "[]";
+
         StringBuilder sb = new StringBuilder();
 
+        sb.append("[\n");
+        indentLevel++;
+
         boolean first = true;
-        sb.append("[");
 
         for (JsonValue value : jsonvalue.elements()) {
-            if (!first) {
+            if (!first)
                 sb.append(",\n");
-            }
-
             first = false;
 
-            sb.append(value.accept(this));
+            sb.append(indent())
+                    .append(value.accept(this));
         }
-        sb.append("]");
+
+        indentLevel--;
+        sb.append("\n").append(indent()).append("]");
+
         return sb.toString();
     }
 
     @Override
     public String visitJsonObject(JsonObject jsonvalue) {
+        if (jsonvalue.members().isEmpty())
+            return "{}";
+
         StringBuilder sb = new StringBuilder();
 
+        sb.append("{\n");
         indentLevel++;
+
         boolean first = true;
 
-        sb.append("{\n");
         for (Map.Entry<String, JsonValue> entry : jsonvalue.members().entrySet()) {
 
             if (!first) {
