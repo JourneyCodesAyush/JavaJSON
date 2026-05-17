@@ -108,7 +108,13 @@ public class Lexer {
 
         if (type == null)
             throw error("Unidentified identifier.");
-        addToken(type);
+        Object literal = switch (type) {
+            case TRUE -> true;
+            case FALSE -> false;
+            case NULL -> null;
+            default -> null;
+        };
+        addToken(type, literal);
     }
 
     private void string(char quote) {
