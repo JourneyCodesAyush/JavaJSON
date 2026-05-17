@@ -3,6 +3,11 @@ package io.github.journeycodesayush.javajson;
 import io.github.journeycodesayush.javajson.parser.*;
 import io.github.journeycodesayush.javajson.parser.JsonAstPrinter.PrintMode;
 import io.github.journeycodesayush.javajson.parser.Parser.ParseError;
+import io.github.journeycodesayush.javajson.query.JsonQuery;
+import io.github.journeycodesayush.javajson.query.PathLexer;
+import io.github.journeycodesayush.javajson.query.PathLexer.PathToken;
+import io.github.journeycodesayush.javajson.query.PathParser;
+import io.github.journeycodesayush.javajson.query.PathSegment;
 import io.github.journeycodesayush.javajson.lexer.*;
 import io.github.journeycodesayush.javajson.lexer.Lexer.LexerError;
 
@@ -27,6 +32,7 @@ public class JavaJSON {
         System.out.println("  format    Pretty print JSON");
         System.out.println("  minify    Minify JSON");
         System.out.println("  validate  Validate JSON");
+        System.out.println("  get       Query JSON with a path expression");
     }
 
     public static void main(String[] args) {
@@ -66,7 +72,33 @@ public class JavaJSON {
                 case "validate" -> {
                     System.out.println("Valid JSON.");
                 }
+                case "get" -> {
 
+                    if (args.length < 3) {
+                        System.err.println("Usage: javajson get <file> <path>");
+                        return;
+                    }
+
+                    String pathQuery = args[2];
+                    PathLexer pathLexer = new PathLexer(pathQuery);
+                    List<PathToken> pathTokens = pathLexer.scanTokens();
+
+                    // for (PathToken token : pathTokens) {
+                    // System.out.println(token);
+                    // }
+
+                    PathParser pathParser = new PathParser(pathTokens);
+                    List<PathSegment> segments = pathParser.parse();
+
+                    // for (PathSegment segment : segments) {
+                    // System.out.println(segment);
+                    // }
+
+                    JsonValue result = JsonQuery.get(value, segments);
+                    if (result != null) {
+                        System.out.println(new JsonAstPrinter(PrintMode.MINIFY).print(result));
+                    }
+                }
                 default -> {
                     System.err.println("Unknown command: " + command);
                     printUsage();
@@ -84,7 +116,6 @@ public class JavaJSON {
             System.err.println("Parser error: " + e.getMessage());
             System.exit(EX_ERROR);
         } catch (Exception e) {
-            // TODO: handle exception
             System.err.println("Internal error: " + e.toString());
             System.exit(EX_SOFTWARE);
         }
