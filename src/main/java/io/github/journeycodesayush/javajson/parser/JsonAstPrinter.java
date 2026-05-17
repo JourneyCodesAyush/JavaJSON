@@ -18,6 +18,14 @@ public class JsonAstPrinter implements JsonValue.Visitor<String> {
         return value.accept(this);
     }
 
+    private String escape(String s) {
+        return s.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
+    }
+
     @Override
     public String visitJsonArray(JsonArray jsonvalue) {
         if (jsonvalue.elements().isEmpty())
@@ -78,7 +86,7 @@ public class JsonAstPrinter implements JsonValue.Visitor<String> {
 
     @Override
     public String visitJsonString(JsonString jsonvalue) {
-        return "\"" + jsonvalue.value() + "\"";
+        return "\"" + escape(jsonvalue.value()) + "\"";
     }
 
     @Override
@@ -90,7 +98,7 @@ public class JsonAstPrinter implements JsonValue.Visitor<String> {
 
     @Override
     public String visitJsonBoolean(JsonBoolean jsonvalue) {
-        return String.valueOf(jsonvalue.value() == true);
+        return String.valueOf(jsonvalue.value());
     }
 
     @Override
