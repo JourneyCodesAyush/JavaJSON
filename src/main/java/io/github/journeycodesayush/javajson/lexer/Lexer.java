@@ -112,18 +112,73 @@ public class Lexer {
     }
 
     private void string(char quote) {
-        while (peek() != quote && !isAtEnd()) {
-            if (peek() == '\n')
-                line++;
-            advance();
+        StringBuilder value = new StringBuilder();
+
+        while (!isAtEnd()) {
+            char c = advance();
+
+            if (c == quote) {
+                addToken(STRING, value.toString());
+                return;
+            }
+
+            if (c == '\\') {
+                if (isAtEnd()) {
+                    throw error("Unterminated escape sequence at line " + line);
+                }
+
+                char next = advance();
+
+                switch (next) {
+                    case '"':
+                        value.append('"');
+                        break;
+                    case '\\':
+                        value.append('\\');
+                        break;
+                    case '/':
+                        value.append('/');
+                        break;
+                    case 'n':
+                        value.append('\n');
+                        break;
+                    case 'r':
+                        value.append('\r');
+                        break;
+                    case 't':
+                        value.append('\t');
+                        break;
+                    case 'b':
+                        value.append('\b');
+                        break;
+                    case 'f':
+                        value.append('\f');
+                        break;
+
+                    case 'u':
+                        // Unicode escape \u0000
+                        StringBuilder hex = new StringBuilder();
+                        for (int i = 0; i < 4; i++) {
+                            if (isAtEnd()) {
+                                throw error("Incomplete unicode escape");
+                            }
+                            hex.append(advance());
+                        }
+                        value.append((char) Integer.parseInt(hex.toString(), 16));
+                        break;
+
+                    default:
+                        throw error("Invalid escape sequence: \\" + next);
+                }
+
+            } else {
+                if (c == '\n')
+                    line++;
+                value.append(c);
+            }
         }
-        if (isAtEnd()) {
-            System.out.println("Unterminated string.");
-            return;
-        }
-        advance();
-        String value = source.substring(start + 1, current - 1);
-        addToken(STRING, value);
+
+        throw error("Unterminated string");
     }
 
     private LexerError error(String message) {
