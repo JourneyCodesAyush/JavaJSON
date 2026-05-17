@@ -6,8 +6,30 @@ import java.util.Map;
 
 public class JsonAstPrinter implements JsonValue.Visitor<String> {
 
+    public enum PrintMode {
+        MINIFY,
+        PRETTY
+    }
+
     private int indentLevel = 0;
     private String INDENT = "  ";
+    private final PrintMode printMode;
+
+    public JsonAstPrinter() {
+        this.printMode = PrintMode.PRETTY;
+    }
+
+    public JsonAstPrinter(PrintMode printMode) {
+        this.printMode = printMode;
+    }
+
+    private String newline() {
+        return printMode == PrintMode.PRETTY ? "\n" : "";
+    }
+
+    private String space() {
+        return printMode == PrintMode.PRETTY ? " " : "";
+    }
 
     private String indent() {
         return INDENT.repeat(indentLevel);
@@ -33,14 +55,14 @@ public class JsonAstPrinter implements JsonValue.Visitor<String> {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append("[\n");
+        sb.append("[").append(newline());
         indentLevel++;
 
         boolean first = true;
 
         for (JsonValue value : jsonvalue.elements()) {
             if (!first)
-                sb.append(",\n");
+                sb.append(",").append(newline());
             first = false;
 
             sb.append(indent())
@@ -48,7 +70,12 @@ public class JsonAstPrinter implements JsonValue.Visitor<String> {
         }
 
         indentLevel--;
-        sb.append("\n").append(indent()).append("]");
+        sb.append(newline());
+
+        if (printMode == PrintMode.PRETTY)
+            sb.append(indent());
+
+        sb.append("]");
 
         return sb.toString();
     }
@@ -60,7 +87,8 @@ public class JsonAstPrinter implements JsonValue.Visitor<String> {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append("{\n");
+        sb.append("{").append(newline());
+
         indentLevel++;
 
         boolean first = true;
@@ -68,19 +96,24 @@ public class JsonAstPrinter implements JsonValue.Visitor<String> {
         for (Map.Entry<String, JsonValue> entry : jsonvalue.members().entrySet()) {
 
             if (!first) {
-                sb.append(",\n");
+                sb.append(",").append(newline());
             }
             first = false;
 
             String key = entry.getKey();
             JsonValue value = entry.getValue();
 
-            sb.append(indent()).append("\"").append(key).append("\": ");
+            sb.append(indent()).append("\"").append(key).append("\":").append(space());
 
             sb.append(value.accept(this));
         }
         indentLevel--;
-        sb.append("\n").append(indent()).append("}");
+        sb.append(newline());
+
+        if (printMode == PrintMode.PRETTY)
+            sb.append(indent());
+
+        sb.append("}");
         return sb.toString();
     }
 
