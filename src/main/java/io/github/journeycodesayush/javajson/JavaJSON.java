@@ -1,6 +1,7 @@
 package io.github.journeycodesayush.javajson;
 
 import io.github.journeycodesayush.javajson.parser.*;
+import io.github.journeycodesayush.javajson.parser.JsonAstPrinter.PrintMode;
 import io.github.journeycodesayush.javajson.parser.Parser.ParseError;
 import io.github.journeycodesayush.javajson.lexer.*;
 import io.github.journeycodesayush.javajson.lexer.Lexer.LexerError;
@@ -20,14 +21,29 @@ public class JavaJSON {
         return Files.readString(Path.of(path));
     }
 
+    private static void printUsage() {
+        System.out.println("Usage: javajson <command> <file.json> [args]");
+        System.out.println("Commands:");
+        System.out.println("  format    Pretty print JSON");
+        System.out.println("  minify    Minify JSON");
+        System.out.println("  validate  Validate JSON");
+    }
+
     public static void main(String[] args) {
         // System.out.println("Hello world!");
-        if (args.length == 0) {
-            System.err.println("usage: javajson <input>.json");
+        if (args.length == 0 || args[0].equals("-h") || args[0].equals("--help")) {
+            printUsage();
+            System.exit(0);
+        }
+
+        if (args.length < 2) {
+            printUsage();
             System.exit(EX_USAGE);
         }
+        String command = args[0];
+        String path = args[1];
         try {
-            String json = file(args[0]);
+            String json = file(path);
 
             Lexer lexer = new Lexer(json);
             List<Token> tokens = lexer.scanTokens();
@@ -35,11 +51,28 @@ public class JavaJSON {
             // System.out.println(token.toString());
             // }
 
-            System.out.println("Original JSON:\n" + json + "\n");
+            // System.out.println("Original JSON:\n" + json + "\n");
             Parser parser = new Parser(tokens);
             JsonValue value = parser.parse();
 
-            System.out.println(new JsonAstPrinter().print(value));
+            switch (command) {
+                case "format" -> {
+                    System.out.println(new JsonAstPrinter().print(value));
+                }
+
+                case "minify" -> {
+                    System.out.println(new JsonAstPrinter(PrintMode.MINIFY).print(value));
+                }
+                case "validate" -> {
+                    System.out.println("Valid JSON.");
+                }
+
+                default -> {
+                    System.err.println("Unknown command: " + command);
+                    printUsage();
+                    System.exit(EX_USAGE);
+                }
+            }
 
         } catch (IOException e) {
             System.err.println("File error: " + e.getMessage());
