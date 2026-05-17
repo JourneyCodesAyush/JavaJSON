@@ -11,13 +11,13 @@ public class JsonQuery {
             switch (segment) {
                 case PathSegment.Key k -> {
                     if (current instanceof JsonValue.JsonObject object) {
-                        System.out.println(k.name());
+                        // System.out.println(k.name());
                         current = object.members().get(k.name());
                     }
                 }
                 case PathSegment.Index i -> {
                     if (current instanceof JsonValue.JsonArray array) {
-                        System.out.println(i.index());
+                        // System.out.println(i.index());
                         current = array.elements().get(i.index());
                     }
                 }
