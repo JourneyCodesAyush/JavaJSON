@@ -110,10 +110,10 @@ public class JavaJSON {
             System.err.println("File error: " + e.getMessage());
             System.exit(EX_SOFTWARE);
         } catch (LexerError e) {
-            System.err.println("Lexer error: " + e.getMessage());
+            System.err.println(e.getMessage());
             System.exit(EX_ERROR);
         } catch (ParseError e) {
-            System.err.println("Parser error: " + e.getMessage());
+            System.err.println(e.getMessage());
             System.exit(EX_ERROR);
         } catch (Exception e) {
             System.err.println("Internal error: " + e.toString());

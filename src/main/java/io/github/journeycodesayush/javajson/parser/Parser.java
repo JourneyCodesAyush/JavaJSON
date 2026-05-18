@@ -15,6 +15,9 @@ import static io.github.journeycodesayush.javajson.lexer.TokenType.*;
 public class Parser {
 
     public static class ParseError extends RuntimeException {
+        public ParseError(String message) {
+            super(message);
+        }
     }
 
     private final List<Token> tokens;
@@ -60,12 +63,11 @@ public class Parser {
         if (check(type)) {
             return advance();
         }
-        throw error(type, message);
+        throw error(message);
     }
 
-    private ParseError error(TokenType type, String message) {
-        System.out.println(message);
-        return new ParseError();
+    private ParseError error(String message) {
+        return new ParseError("[PARSER] line " + peek().line() + ": " + message);
     }
 
     public Parser(List<Token> tokens) {
@@ -77,7 +79,7 @@ public class Parser {
             JsonValue value = value();
             // consume(EOF, "Expected end of file.");
             if (peek().type() != EOF) {
-                throw error(EOF, "Expected EOF but found: " + peek().lexeme());
+                throw error("Expected EOF but found: " + peek().lexeme());
             }
             return value;
         } catch (ParseError e) {
@@ -108,7 +110,7 @@ public class Parser {
         if (match(NULL))
             return parseJsonNull();
 
-        throw error(peek().type(), "Unexpected token: " + peek().lexeme());
+        throw error("Unexpected token: " + peek().lexeme());
     }
 
     private JsonObject parseJsonObject() {

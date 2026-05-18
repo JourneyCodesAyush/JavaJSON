@@ -10,6 +10,9 @@ import static io.github.journeycodesayush.javajson.lexer.TokenType.*;
 public class Lexer {
 
     public static class LexerError extends RuntimeException {
+        public LexerError(String message) {
+            super(message);
+        }
     }
 
     private final String source;
@@ -107,7 +110,7 @@ public class Lexer {
         TokenType type = keywords.get(text);
 
         if (type == null)
-            throw error("Unidentified identifier.");
+            throw error("Unidentified identifier '" + text + "'");
         Object literal = switch (type) {
             case TRUE -> true;
             case FALSE -> false;
@@ -130,7 +133,7 @@ public class Lexer {
 
             if (c == '\\') {
                 if (isAtEnd()) {
-                    throw error("Unterminated escape sequence at line " + line);
+                    throw error("Unterminated escape sequence");
                 }
 
                 char next = advance();
@@ -174,7 +177,7 @@ public class Lexer {
                         break;
 
                     default:
-                        throw error("Invalid escape sequence: \\" + next);
+                        throw error("Invalid escape sequence \\" + next);
                 }
 
             } else {
@@ -188,8 +191,7 @@ public class Lexer {
     }
 
     private LexerError error(String message) {
-        System.out.println(message);
-        throw new LexerError();
+        throw new LexerError("[LEXER] line " + line + ": " + message);
     }
 
     private char advance() {
@@ -226,8 +228,7 @@ public class Lexer {
                 advance();
             }
             if (!isDigit(peek())) {
-                System.err.println("Not a valid exponent.");
-                return;
+                throw error("Not a valid exponent");
             }
 
             while (isDigit(peek())) {
