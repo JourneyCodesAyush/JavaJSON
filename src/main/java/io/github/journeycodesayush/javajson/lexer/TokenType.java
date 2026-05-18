@@ -9,6 +9,9 @@ public enum TokenType {
     COLON,
     COMMA,
 
+    // Unary Operator
+    MINUS,
+
     // String, boolean, number
     STRING,
     TRUE,

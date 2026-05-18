@@ -81,6 +81,7 @@ public class Lexer {
 
             case ':' -> addToken(COLON);
             case ',' -> addToken(COMMA);
+            case '-' -> addToken(MINUS);
 
             case ' ', '\t', '\r' -> {
 
