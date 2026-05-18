@@ -2,6 +2,8 @@
 
 ![Java](https://img.shields.io/badge/Java-21%2B-orange)
 ![Maven](https://img.shields.io/badge/Maven-3.19.15-blue)
+![Version](https://img.shields.io/github/v/tag/JourneyCodesAyush/javajson?label=latest&color=purple)
+![License](https://img.shields.io/badge/license-MIT-green)
 
 A JSON parser and CLI tool written in Java, built from scratch following recursive descent parsing principles.
 
@@ -21,10 +23,10 @@ mvn package
 ## Usage
 
 ```bash
-java -jar target/JavaJSON-0.1.0.jar format input.json
-java -jar target/JavaJSON-0.1.0.jar minify input.json
-java -jar target/JavaJSON-0.1.0.jar validate input.json
-java -jar target/JavaJSON-0.1.0.jar get input.json ".users[0].email"
+java -jar target/JavaJSON-0.5.0.jar format input.json
+java -jar target/JavaJSON-0.5.0.jar minify input.json
+java -jar target/JavaJSON-0.5.0.jar validate input.json
+java -jar target/JavaJSON-0.5.0.jar get input.json ".users[0].email"
 ```
 
 ## Path Query Syntax

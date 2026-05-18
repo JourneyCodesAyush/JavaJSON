@@ -6,7 +6,7 @@
 
     <groupId>io.github.journeycodesayush</groupId>
     <artifactId>JavaJSON</artifactId>
-    <version>0.1.0</version>
+    <version>0.5.0</version>
 
     <name>JavaJSON</name>
     <description>A JSON parser written in Java</description>
