@@ -53,11 +53,7 @@ public class JavaJSON {
 
             Lexer lexer = new Lexer(json);
             List<Token> tokens = lexer.scanTokens();
-            // for (Token token : tokens) {
-            // System.out.println(token.toString());
-            // }
 
-            // System.out.println("Original JSON:\n" + json + "\n");
             Parser parser = new Parser(tokens);
             JsonValue value = parser.parse();
 
@@ -71,6 +67,7 @@ public class JavaJSON {
                 }
                 case "validate" -> {
                     System.out.println("Valid JSON.");
+                    System.exit(0);
                 }
                 case "get" -> {
 
@@ -83,16 +80,8 @@ public class JavaJSON {
                     PathLexer pathLexer = new PathLexer(pathQuery);
                     List<PathToken> pathTokens = pathLexer.scanTokens();
 
-                    // for (PathToken token : pathTokens) {
-                    // System.out.println(token);
-                    // }
-
                     PathParser pathParser = new PathParser(pathTokens);
                     List<PathSegment> segments = pathParser.parse();
-
-                    // for (PathSegment segment : segments) {
-                    // System.out.println(segment);
-                    // }
 
                     JsonValue result = JsonQuery.get(value, segments);
                     if (!(result instanceof JsonValue.JsonNull)) {
