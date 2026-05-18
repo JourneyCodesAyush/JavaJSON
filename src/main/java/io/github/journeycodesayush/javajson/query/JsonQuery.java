@@ -23,6 +23,6 @@ public class JsonQuery {
                 }
             }
         }
-        return current;
+        return current == null ? new JsonValue.JsonNull() : current;
     }
 }

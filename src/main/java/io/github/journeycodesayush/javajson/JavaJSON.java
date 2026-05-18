@@ -95,7 +95,7 @@ public class JavaJSON {
                     // }
 
                     JsonValue result = JsonQuery.get(value, segments);
-                    if (result != null) {
+                    if (!(result instanceof JsonValue.JsonNull)) {
                         System.out.println(new JsonAstPrinter(PrintMode.MINIFY).print(result));
                     }
                 }
