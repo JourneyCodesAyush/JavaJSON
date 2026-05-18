@@ -98,6 +98,10 @@ public class Parser {
         if (match(STRING))
             return parseJsonString();
 
+        if (match(MINUS)) {
+            Token token = consume(NUMBER, "Expected a number after '-'");
+            return new JsonValue.JsonNumber(-((Double) token.literal()));
+        }
         if (match(NUMBER))
             return parseJsonNumber();
 
