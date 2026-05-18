@@ -2,7 +2,7 @@
 
 ![Java](https://img.shields.io/badge/Java-21%2B-orange)
 ![Maven](https://img.shields.io/badge/Maven-3.19.15-blue)
-![Version](https://img.shields.io/github/v/tag/JourneyCodesAyush/javajson?label=latest&color=purple)
+![Version](https://img.shields.io/github/v/tag/JourneyCodesAyush/JavaJSON?label=latest&color=purple)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 A JSON parser and CLI tool written in Java, built from scratch following recursive descent parsing principles.
