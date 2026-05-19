@@ -51,6 +51,9 @@ public class JavaJSON {
      */
     private static void printUsage() {
         System.out.println("Usage: javajson <command> <file.json> [args]");
+        System.out.println("Flags:");
+        System.out.println("  -h, --help     Print this");
+        System.out.println("  -v, --version  Print version information");
         System.out.println("Commands:");
         System.out.println("  format    Pretty print JSON");
         System.out.println("  minify    Minify JSON");
@@ -71,6 +74,10 @@ public class JavaJSON {
         // System.out.println("Hello world!");
         if (args.length == 0 || args[0].equals("-h") || args[0].equals("--help")) {
             printUsage();
+            System.exit(0);
+        }
+        if (args.length == 1 && (args[0].equals("-v") || args[0].equals("--version"))) {
+            System.out.println("JavaJSON v0.5.0");
             System.exit(0);
         }
 
