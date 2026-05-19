@@ -21,6 +21,12 @@ import java.util.List;
  */
 public class GenerateAst {
 
+    /**
+     * Entry point for the AST generation tool.
+     *
+     * @param args command-line arguments; args[0] must be the output directory
+     * @throws IOException if writing to a file fails
+     */
     public static void main(String[] args) throws IOException {
         if (args.length != 1) {
             System.err.println("Usage generate_ast <output directory>");
@@ -36,6 +42,16 @@ public class GenerateAst {
                 "JsonNull : "));
     }
 
+    /**
+     * Generates a Java source file containing a sealed interface and its
+     * nested record types for the given base name and type definitions.
+     *
+     * @param outputDir the directory where the generated file will be saved
+     * @param baseName  the name of the base interface (e.g., "JsonValue")
+     * @param types     a list of type definitions in the format "ClassName :
+     *                  fields"
+     * @throws IOException if writing to the file fails
+     */
     private static void defineAst(String outputDir, String baseName, List<String> types) throws IOException {
         String path = outputDir + "/" + baseName + ".java";
         PrintWriter writer = new PrintWriter(path, "UTF-8");
@@ -73,6 +89,14 @@ public class GenerateAst {
         writer.close();
     }
 
+    /**
+     * Writes a record type implementing the base interface to the output file.
+     *
+     * @param writer    the {@link PrintWriter} to write to
+     * @param baseName  the base interface name
+     * @param className the record class name
+     * @param fieldList the comma-separated field declarations
+     */
     private static void defineType(PrintWriter writer, String baseName, String className, String fieldList) {
         writer.println("    public record " + className + "(" + fieldList + ") implements " + baseName + " {");
 
@@ -85,6 +109,13 @@ public class GenerateAst {
         writer.println("    }");
     }
 
+    /**
+     * Writes the Visitor interface for the given base interface and types.
+     *
+     * @param writer   the {@link PrintWriter} to write to
+     * @param baseName the base interface name
+     * @param types    the list of type definitions
+     */
     private static void defineVisitor(PrintWriter writer, String baseName, List<String> types) {
         writer.println("    /**");
         writer.println("     * Visitor interface for " + baseName + " nodes.");

@@ -4,7 +4,24 @@ import java.util.List;
 
 import io.github.journeycodesayush.javajson.parser.JsonValue;
 
+/**
+ * Evaluates a parsed JSON path against a {@link JsonValue} tree.
+ * <p>
+ * Walks the tree guided by a list of {@link PathSegment} objects,
+ * returning the value at the specified path, or {@link JsonValue.JsonNull}
+ * if the path does not exist.
+ * </p>
+ */
 public class JsonQuery {
+    /**
+     * Evaluates the given path segments against the root {@link JsonValue}.
+     *
+     * @param root     the root {@link JsonValue} to query
+     * @param segments the list of {@link PathSegment} objects representing the path
+     * @return the {@link JsonValue} at the specified path, or
+     *         {@link JsonValue.JsonNull}
+     *         if the path does not resolve to a value
+     */
     public static JsonValue get(JsonValue root, List<PathSegment> segments) {
         JsonValue current = root;
         for (PathSegment segment : segments) {

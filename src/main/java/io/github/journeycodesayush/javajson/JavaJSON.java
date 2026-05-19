@@ -17,16 +17,38 @@ import java.util.List;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * Entry point for the JavaJSON CLI tool.
+ * <p>
+ * Provides commands to format, minify, validate, and query JSON files
+ * using a jq-like path expression syntax.
+ * </p>
+ */
 public class JavaJSON {
 
+    /** Exit code for incorrect usage or missing arguments. */
     private static final int EX_USAGE = 64;
+
+    /** Exit code for lexer or parser errors. */
     private static final int EX_ERROR = 65;
+
+    /** Exit code for internal software errors. */
     private static final int EX_SOFTWARE = 70;
 
+    /**
+     * Reads the contents of a file at the given path.
+     *
+     * @param path the file path to read
+     * @return the file contents as a string
+     * @throws IOException if the file cannot be read
+     */
     private static String file(String path) throws IOException {
         return Files.readString(Path.of(path));
     }
 
+    /**
+     * Prints usage information and available commands to standard output.
+     */
     private static void printUsage() {
         System.out.println("Usage: javajson <command> <file.json> [args]");
         System.out.println("Commands:");
@@ -36,6 +58,15 @@ public class JavaJSON {
         System.out.println("  get       Query JSON with a path expression");
     }
 
+    /**
+     * Main entry point for the JavaJSON CLI.
+     * <p>
+     * Accepts a command and a JSON file path as arguments, with an optional
+     * path expression for the {@code get} command.
+     * </p>
+     *
+     * @param args command-line arguments: {@code <command> <file.json> [path]}
+     */
     public static void main(String[] args) {
         // System.out.println("Hello world!");
         if (args.length == 0 || args[0].equals("-h") || args[0].equals("--help")) {
