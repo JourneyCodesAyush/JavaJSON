@@ -84,6 +84,20 @@ public class ParserTest {
     }
 
     @Test
+    void testNegativeNumber() {
+        JsonValue result = parse("[-1, -3.14, -1e10]");
+
+        assertInstanceOf(JsonValue.JsonArray.class, result);
+
+        JsonValue.JsonArray arr = (JsonValue.JsonArray) result;
+        assertEquals(3, arr.elements().size());
+
+        assertEquals(-1.0, ((JsonValue.JsonNumber) arr.elements().get(0)).value());
+        assertEquals(-3.14, ((JsonValue.JsonNumber) arr.elements().get(1)).value());
+        assertEquals(-1e10, ((JsonValue.JsonNumber) arr.elements().get(2)).value());
+    }
+
+    @Test
     void testBooleanAndNull() {
 
         // [true, false, null] EOF
