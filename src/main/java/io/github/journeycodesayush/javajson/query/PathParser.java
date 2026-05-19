@@ -19,6 +19,12 @@ public class PathParser {
 
     private int current = 0;
 
+    public static class PathParseError extends RuntimeException {
+        public PathParseError(String message) {
+            super("[PATH] " + message);
+        }
+    }
+
     public PathParser(List<PathToken> tokens) {
         this.tokens = tokens;
     }
@@ -63,7 +69,7 @@ public class PathParser {
         if (check(type)) {
             return advance();
         }
-        throw new RuntimeException(message);
+        throw new PathParseError(message);
     }
 
     public List<PathSegment> parse() {

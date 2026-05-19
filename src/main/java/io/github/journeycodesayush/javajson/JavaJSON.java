@@ -6,6 +6,7 @@ import io.github.journeycodesayush.javajson.parser.Parser.ParseError;
 import io.github.journeycodesayush.javajson.query.JsonQuery;
 import io.github.journeycodesayush.javajson.query.PathLexer;
 import io.github.journeycodesayush.javajson.query.PathLexer.PathToken;
+import io.github.journeycodesayush.javajson.query.PathParser.PathParseError;
 import io.github.journeycodesayush.javajson.query.PathParser;
 import io.github.journeycodesayush.javajson.query.PathSegment;
 import io.github.journeycodesayush.javajson.lexer.*;
@@ -102,6 +103,9 @@ public class JavaJSON {
             System.err.println(e.getMessage());
             System.exit(EX_ERROR);
         } catch (ParseError e) {
+            System.err.println(e.getMessage());
+            System.exit(EX_ERROR);
+        } catch (PathParseError e) {
             System.err.println(e.getMessage());
             System.exit(EX_ERROR);
         } catch (Exception e) {
