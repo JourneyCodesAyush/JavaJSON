@@ -169,8 +169,7 @@ public class PathParser {
             return index();
         }
 
-        System.err.println("Unexpected token: " + (String) peek().literal());
-        return null;
+        throw new PathParseError("Unexpected token '" + (String) peek().literal() + "'");
     }
 
     /**
