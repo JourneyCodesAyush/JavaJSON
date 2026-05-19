@@ -10,7 +10,7 @@ package io.github.journeycodesayush.javajson.lexer;
 public enum TokenType {
 
     // Single character tokens
-    /** Opening curly brace {@code {}. */
+    /** Opening curly brace <code>{</code>. */
     LEFT_CURLY_BRACE,
     /** Closing curly brace {@code }}. */
     RIGHT_CURLY_BRACE,
