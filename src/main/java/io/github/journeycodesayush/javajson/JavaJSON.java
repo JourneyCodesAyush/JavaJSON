@@ -77,7 +77,7 @@ public class JavaJSON {
             System.exit(0);
         }
         if (args.length == 1 && (args[0].equals("-v") || args[0].equals("--version"))) {
-            System.out.println("JavaJSON v0.5.0");
+            System.out.println("JavaJSON v0.5.1");
             System.exit(0);
         }
 

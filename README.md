@@ -27,10 +27,10 @@ mvn package
 ## Usage
 
 ```bash
-java -jar target/JavaJSON-0.5.0.jar format input.json
-java -jar target/JavaJSON-0.5.0.jar minify input.json
-java -jar target/JavaJSON-0.5.0.jar validate input.json
-java -jar target/JavaJSON-0.5.0.jar get input.json ".users[0].email"
+java -jar target/JavaJSON-0.5.1.jar format input.json
+java -jar target/JavaJSON-0.5.1.jar minify input.json
+java -jar target/JavaJSON-0.5.1.jar validate input.json
+java -jar target/JavaJSON-0.5.1.jar get input.json ".users[0].email"
 ```
 
 ---
