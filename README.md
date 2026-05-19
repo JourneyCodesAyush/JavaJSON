@@ -81,6 +81,31 @@ mvn test
 
 ---
 
+## Contributing
+
+Contributions are welcome. Please follow these guidelines:
+
+- Fork the repository and create a branch: `feat/feature-name` or `fix/bug-name`
+- Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for commit messages
+- Run `mvn test` before submitting a pull request
+- Open a pull request with a clear description of your changes
+
+### Commit Scopes
+
+| Scope  | Description                    |
+| ------ | ------------------------------ |
+| lexer  | Changes to the lexer           |
+| parser | Changes to the parser          |
+| query  | Changes to the query engine    |
+| cli    | Changes to the CLI entry point |
+| tool   | Changes to the AST generator   |
+| test   | Changes to tests               |
+| docs   | Documentation changes          |
+| build  | Build configuration changes    |
+| ci     | CI/CD changes                  |
+
+---
+
 ## License
 
 MIT - See [LICENSE](LICENSE)
