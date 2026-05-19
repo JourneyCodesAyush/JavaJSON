@@ -14,11 +14,15 @@ A JSON parser and CLI tool written in Java, built from scratch following recursi
 - Minify JSON
 - Query JSON with jq-like path expressions
 
+---
+
 ## Build
 
 ```bash
 mvn package
 ```
+
+---
 
 ## Usage
 
@@ -29,6 +33,8 @@ java -jar target/JavaJSON-0.5.0.jar validate input.json
 java -jar target/JavaJSON-0.5.0.jar get input.json ".users[0].email"
 ```
 
+---
+
 ## Path Query Syntax
 
 ```
@@ -36,6 +42,8 @@ java -jar target/JavaJSON-0.5.0.jar get input.json ".users[0].email"
 .[0]          # array index access
 .users[0].email  # chained access
 ```
+
+---
 
 ## Project Structure
 
@@ -62,6 +70,16 @@ JavaJSON/
 ├── LICENSE                  # MIT License
 └── README.md                # You're reading it!
 ```
+
+---
+
+## Running Tests
+
+```bash
+mvn test
+```
+
+---
 
 ## License
 
