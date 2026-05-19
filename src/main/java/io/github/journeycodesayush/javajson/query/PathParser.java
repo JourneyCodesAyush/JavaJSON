@@ -136,13 +136,8 @@ public class PathParser {
      * @throws PathParseError if the path expression is invalid
      */
     public List<PathSegment> parse() {
-        try {
-            List<PathSegment> pathSegments = path();
-            return pathSegments;
-        } catch (Exception e) {
-            // TODO: handle exception
-            throw e;
-        }
+        List<PathSegment> pathSegments = path();
+        return pathSegments;
     }
 
     /**

@@ -144,18 +144,11 @@ public class Parser {
      * @return the parsed {@link JsonValue}
      */
     public JsonValue parse() {
-        try {
-            JsonValue value = value();
-            // consume(EOF, "Expected end of file.");
-            if (peek().type() != EOF) {
-                throw error("Expected EOF but found: " + peek().lexeme());
-            }
-            return value;
-        } catch (ParseError e) {
-            // TODO: handle exception
-            throw e;
+        JsonValue value = value();
+        if (peek().type() != EOF) {
+            throw error("Expected EOF but found: " + peek().lexeme());
         }
-
+        return value;
     }
 
     /**
