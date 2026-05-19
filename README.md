@@ -1,5 +1,9 @@
 # JavaJSON
 
+<p align="center">
+  <img src="https://img.shields.io/badge/status-maintenance%20mode-FFA500?style=for-the-badge&logo=&logoColor=white" alt="Maintenance Mode">
+</p>
+
 ![Java](https://img.shields.io/badge/Java-21%2B-orange)
 ![Maven](https://img.shields.io/badge/Maven-3.19.15-blue)
 ![Version](https://img.shields.io/github/v/tag/JourneyCodesAyush/JavaJSON?label=latest&color=purple)
@@ -109,3 +113,13 @@ Contributions are welcome. Please follow these guidelines:
 ## License
 
 MIT - See [LICENSE](LICENSE)
+
+---
+
+## Closure
+
+JavaJSON started as a detour the night before an OS exam and turned into a complete JSON parser, CLI tool, and query engine.
+
+Building this taught me how a clean grammar maps directly to recursive descent code, how Java's sealed interfaces and records make tree structures elegant, and that the best way to understand something is to build it yourself.
+
+The parser has fulfilled its purpose and has been shifted to maintenance mode.
