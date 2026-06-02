@@ -156,6 +156,8 @@ public class Lexer {
                     number();
                 else if (isAlphaNumeric(c)) {
                     literalKeyword();
+                } else {
+                    throw error("Unexpected character '" + c + "'");
                 }
             }
         }
@@ -253,6 +255,9 @@ public class Lexer {
                 }
 
             } else {
+                if (c < 0x20)
+                    throw error("Unescaped control character in string");
+
                 if (c == '\n')
                     line++;
                 value.append(c);
@@ -319,6 +324,11 @@ public class Lexer {
      * @throws LexerError if the exponent part is malformed
      */
     private void number() {
+        // Leading zero's not allowed
+        if (source.charAt(start) == '0' && isDigit(peek())) {
+            throw error("Leading zeroes are not allowed");
+        }
+
         // Integer
         while (isDigit(peek()))
             advance();
