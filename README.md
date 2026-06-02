@@ -85,6 +85,30 @@ mvn test
 
 ---
 
+## JSON Parsing Tests
+
+Parsing conformance is validated against the [JSONTestSuite](https://github.com/nst/JSONTestSuite) by Nicolas Seriot — a comprehensive test suite covering valid, invalid, and implementation-defined JSON inputs.
+
+### Running Parsing Tests
+
+Download or clone the test suite and place the `test_parsing/` directory in the project root, then run:
+
+```bash
+python run_parsing_tests.py
+```
+
+### Results
+
+| Category                      | Count |
+| ----------------------------- | ----- |
+| Must accept (`y_`)            | 95    |
+| Must reject (`n_`)            | 188   |
+| Implementation defined (`i_`) | 35    |
+
+All 283 required tests pass. Implementation-defined tests are skipped.
+
+---
+
 ## Contributing
 
 Contributions are welcome. Please follow these guidelines:
