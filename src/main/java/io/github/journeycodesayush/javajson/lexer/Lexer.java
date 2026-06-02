@@ -139,7 +139,13 @@ public class Lexer {
 
             case ':' -> addToken(COLON);
             case ',' -> addToken(COMMA);
-            case '-' -> addToken(MINUS);
+            case '-' -> {
+                if (isDigit(peek())) {
+                    addToken(MINUS);
+                } else {
+                    throw error("Expected digit after '-'");
+                }
+            }
 
             case ' ', '\t', '\r' -> {
 
