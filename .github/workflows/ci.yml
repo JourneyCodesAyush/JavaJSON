@@ -23,3 +23,6 @@ jobs:
 
       - name: Run tests
         run: mvn test
+
+      - name: Check formatting
+        run: mvn spotless:check
