@@ -8,6 +8,7 @@
 ![Maven](https://img.shields.io/badge/Maven-3.19.15-blue)
 ![Version](https://img.shields.io/github/v/tag/JourneyCodesAyush/JavaJSON?label=latest&color=purple)
 ![License](https://img.shields.io/badge/license-MIT-green)
+![CI](https://github.com/JourneyCodesAyush/JavaJSON/actions/workflows/ci.yml/badge.svg)
 
 A JSON parser and CLI tool written in Java, built from scratch following recursive descent parsing principles.
 
@@ -115,8 +116,13 @@ Contributions are welcome. Please follow these guidelines:
 
 - Fork the repository and create a branch: `feat/feature-name` or `fix/bug-name`
 - Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for commit messages
-- Run `mvn test` before submitting a pull request
+- Run `mvn spotless:apply` to auto-format code before committing
+- Run `mvn verify` (or `mvn test` + `mvn spotless:check`) before submitting a pull request
 - Open a pull request with a clear description of your changes
+
+CI runs on every push and pull request, running tests and checking code formatting with [Spotless](https://github.com/diffplug/spotless).
+
+---
 
 ### Commit Scopes
 
