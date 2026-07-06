@@ -1,287 +1,265 @@
 package io.github.journeycodesayush.javajson.parser;
 
-import java.util.List;
-
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import static io.github.journeycodesayush.javajson.lexer.TokenType.*;
 
 import io.github.journeycodesayush.javajson.lexer.Token;
 import io.github.journeycodesayush.javajson.lexer.TokenType;
 import io.github.journeycodesayush.javajson.parser.JsonValue.*;
-
-import static io.github.journeycodesayush.javajson.lexer.TokenType.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Recursive descent parser for JSON.
- * <p>
- * Consumes a list of {@link Token} objects produced by the
- * {@link io.github.journeycodesayush.javajson.lexer.Lexer}
- * and produces a {@link JsonValue} tree.
- * </p>
+ *
+ * <p>Consumes a list of {@link Token} objects produced by the {@link
+ * io.github.journeycodesayush.javajson.lexer.Lexer} and produces a {@link JsonValue} tree.
  */
 public class Parser {
 
-    /** Thrown when the parser encounters unexpected or invalid tokens. */
-    public static class ParseError extends RuntimeException {
-        public ParseError(String message) {
-            super(message);
-        }
+  /** Thrown when the parser encounters unexpected or invalid tokens. */
+  public static class ParseError extends RuntimeException {
+    public ParseError(String message) {
+      super(message);
     }
+  }
 
-    /** The list of tokens to parse. */
-    private final List<Token> tokens;
+  /** The list of tokens to parse. */
+  private final List<Token> tokens;
 
-    /** Current position in the token list. */
-    private int current = 0;
+  /** Current position in the token list. */
+  private int current = 0;
 
-    /**
-     * Checks whether the parser has reached the end of the token stream.
-     *
-     * @return true if at EOF, false otherwise
-     */
-    private boolean isAtEnd() {
-        return peek().type() == EOF;
+  /**
+   * Checks whether the parser has reached the end of the token stream.
+   *
+   * @return true if at EOF, false otherwise
+   */
+  private boolean isAtEnd() {
+    return peek().type() == EOF;
+  }
+
+  /**
+   * Returns the current token without consuming it.
+   *
+   * @return the current {@link Token}
+   */
+  private Token peek() {
+    return tokens.get(current);
+  }
+
+  /**
+   * Returns the most recently consumed token.
+   *
+   * @return the previous {@link Token}
+   */
+  private Token previous() {
+    return tokens.get(current - 1);
+  }
+
+  /**
+   * Consumes the current token and returns it.
+   *
+   * @return the consumed {@link Token}
+   */
+  private Token advance() {
+    if (!isAtEnd()) {
+      current++;
     }
+    return previous();
+  }
 
-    /**
-     * Returns the current token without consuming it.
-     *
-     * @return the current {@link Token}
-     */
-    private Token peek() {
-        return tokens.get(current);
+  /**
+   * Checks if the current token is of the given type without consuming it.
+   *
+   * @param type the {@link TokenType} to check
+   * @return true if it matches, false otherwise
+   */
+  private boolean check(TokenType type) {
+    if (isAtEnd()) return false;
+
+    return peek().type() == type;
+  }
+
+  /**
+   * Checks if the current token matches any of the given types and advances if so.
+   *
+   * @param types one or more {@link TokenType} values to match
+   * @return true if matched and advanced, false otherwise
+   */
+  private boolean match(TokenType... types) {
+    for (TokenType type : types) {
+      if (check(type)) {
+        advance();
+        return true;
+      }
     }
+    return false;
+  }
 
-    /**
-     * Returns the most recently consumed token.
-     *
-     * @return the previous {@link Token}
-     */
-    private Token previous() {
-        return tokens.get(current - 1);
+  /**
+   * Consumes a token of the expected type or throws a {@link ParseError}.
+   *
+   * @param type the expected {@link TokenType}
+   * @param message the error message if the type does not match
+   * @return the consumed {@link Token}
+   * @throws ParseError if the current token does not match the expected type
+   */
+  private Token consume(TokenType type, String message) {
+    if (check(type)) {
+      return advance();
     }
+    throw error(message);
+  }
 
-    /**
-     * Consumes the current token and returns it.
-     *
-     * @return the consumed {@link Token}
-     */
-    private Token advance() {
-        if (!isAtEnd()) {
-            current++;
-        }
-        return previous();
+  /**
+   * Creates a {@link ParseError} with the given message and current line number.
+   *
+   * @param message the error description
+   * @return a new {@link ParseError}
+   */
+  private ParseError error(String message) {
+    return new ParseError("[PARSER] line " + peek().line() + ": " + message);
+  }
+
+  /**
+   * Constructs a Parser for the given token list.
+   *
+   * @param tokens the list of tokens to parse
+   */
+  public Parser(List<Token> tokens) {
+    this.tokens = tokens;
+  }
+
+  /**
+   * Parses the token stream and returns the root {@link JsonValue}.
+   *
+   * @return the parsed {@link JsonValue}
+   */
+  public JsonValue parse() {
+    JsonValue value = value();
+    if (peek().type() != EOF) {
+      throw error("Expected EOF but found: " + peek().lexeme());
     }
+    return value;
+  }
 
-    /**
-     * Checks if the current token is of the given type without consuming it.
-     *
-     * @param type the {@link TokenType} to check
-     * @return true if it matches, false otherwise
-     */
-    private boolean check(TokenType type) {
-        if (isAtEnd())
-            return false;
+  /**
+   * Parses a JSON value — object, array, string, number, boolean, or null.
+   *
+   * @return the parsed {@link JsonValue}
+   * @throws ParseError if no valid value is found
+   */
+  private JsonValue value() {
+    if (match(LEFT_CURLY_BRACE)) return parseJsonObject();
+    if (match(LEFT_BRACKET)) return parseJsonArray();
 
-        return peek().type() == type;
+    if (match(STRING)) return parseJsonString();
+
+    if (match(MINUS)) {
+      Token token = consume(NUMBER, "Expected a number after '-'");
+      return new JsonValue.JsonNumber(-((Double) token.literal()));
     }
+    if (match(NUMBER)) return parseJsonNumber();
 
-    /**
-     * Checks if the current token matches any of the given types and advances if
-     * so.
-     *
-     * @param types one or more {@link TokenType} values to match
-     * @return true if matched and advanced, false otherwise
-     */
-    private boolean match(TokenType... types) {
-        for (TokenType type : types) {
-            if (check(type)) {
-                advance();
-                return true;
-            }
-        }
-        return false;
-    }
+    if (match(TRUE)) return parseJsonBoolean();
 
-    /**
-     * Consumes a token of the expected type or throws a {@link ParseError}.
-     *
-     * @param type    the expected {@link TokenType}
-     * @param message the error message if the type does not match
-     * @return the consumed {@link Token}
-     * @throws ParseError if the current token does not match the expected type
-     */
-    private Token consume(TokenType type, String message) {
-        if (check(type)) {
-            return advance();
-        }
-        throw error(message);
-    }
+    if (match(FALSE)) return parseJsonBoolean();
 
-    /**
-     * Creates a {@link ParseError} with the given message and current line number.
-     *
-     * @param message the error description
-     * @return a new {@link ParseError}
-     */
-    private ParseError error(String message) {
-        return new ParseError("[PARSER] line " + peek().line() + ": " + message);
-    }
+    if (match(NULL)) return parseJsonNull();
 
-    /**
-     * Constructs a Parser for the given token list.
-     *
-     * @param tokens the list of tokens to parse
-     */
-    public Parser(List<Token> tokens) {
-        this.tokens = tokens;
-    }
+    throw error("Unexpected token: " + peek().lexeme());
+  }
 
-    /**
-     * Parses the token stream and returns the root {@link JsonValue}.
-     *
-     * @return the parsed {@link JsonValue}
-     */
-    public JsonValue parse() {
-        JsonValue value = value();
-        if (peek().type() != EOF) {
-            throw error("Expected EOF but found: " + peek().lexeme());
-        }
-        return value;
-    }
+  /**
+   * Parses a JSON object and returns a {@link JsonValue.JsonObject}.
+   *
+   * @return the parsed {@link JsonValue.JsonObject}
+   * @throws ParseError if the object is malformed
+   */
+  private JsonObject parseJsonObject() {
+    Map<String, JsonValue> members = new LinkedHashMap<>();
 
-    /**
-     * Parses a JSON value — object, array, string, number, boolean, or null.
-     *
-     * @return the parsed {@link JsonValue}
-     * @throws ParseError if no valid value is found
-     */
-    private JsonValue value() {
-        if (match(LEFT_CURLY_BRACE))
-            return parseJsonObject();
-        if (match(LEFT_BRACKET))
-            return parseJsonArray();
+    if (match(RIGHT_CURLY_BRACE)) return new JsonObject(members);
 
-        if (match(STRING))
-            return parseJsonString();
+    do {
 
-        if (match(MINUS)) {
-            Token token = consume(NUMBER, "Expected a number after '-'");
-            return new JsonValue.JsonNumber(-((Double) token.literal()));
-        }
-        if (match(NUMBER))
-            return parseJsonNumber();
+      Token token = consume(STRING, "Expected a string.");
+      String key = (String) token.literal();
+      consume(COLON, "Expected a ':'");
 
-        if (match(TRUE))
-            return parseJsonBoolean();
+      JsonValue value = value();
+      members.put(key, value);
+    } while (match(COMMA));
+    consume(RIGHT_CURLY_BRACE, "Expected a '}'");
 
-        if (match(FALSE))
-            return parseJsonBoolean();
+    return new JsonObject(members);
+  }
 
-        if (match(NULL))
-            return parseJsonNull();
+  /**
+   * Parses a JSON array and returns a {@link JsonValue.JsonArray}.
+   *
+   * @return the parsed {@link JsonValue.JsonArray}
+   * @throws ParseError if the array is malformed
+   */
+  private JsonArray parseJsonArray() {
+    List<JsonValue> elements = new ArrayList<>();
 
-        throw error("Unexpected token: " + peek().lexeme());
-    }
+    if (match(RIGHT_BRACKET)) return new JsonArray(elements);
 
-    /**
-     * Parses a JSON object and returns a {@link JsonValue.JsonObject}.
-     *
-     * @return the parsed {@link JsonValue.JsonObject}
-     * @throws ParseError if the object is malformed
-     */
-    private JsonObject parseJsonObject() {
-        Map<String, JsonValue> members = new LinkedHashMap<>();
+    do {
+      JsonValue value = value();
+      elements.add(value);
 
-        if (match(RIGHT_CURLY_BRACE))
-            return new JsonObject(members);
+    } while (match(COMMA));
 
-        do {
+    consume(RIGHT_BRACKET, "Expected a ']'");
 
-            Token token = consume(STRING, "Expected a string.");
-            String key = (String) token.literal();
-            consume(COLON, "Expected a ':'");
+    return new JsonArray(elements);
+  }
 
-            JsonValue value = value();
-            members.put(key, value);
-        } while (match(COMMA));
-        consume(RIGHT_CURLY_BRACE, "Expected a '}'");
+  /**
+   * Returns a {@link JsonValue.JsonString} from the previously consumed string token.
+   *
+   * @return the parsed {@link JsonValue.JsonString}
+   */
+  private JsonString parseJsonString() {
 
-        return new JsonObject(members);
-    }
+    Token token = previous();
 
-    /**
-     * Parses a JSON array and returns a {@link JsonValue.JsonArray}.
-     *
-     * @return the parsed {@link JsonValue.JsonArray}
-     * @throws ParseError if the array is malformed
-     */
-    private JsonArray parseJsonArray() {
-        List<JsonValue> elements = new ArrayList<>();
+    return new JsonString((String) token.literal());
+  }
 
-        if (match(RIGHT_BRACKET))
-            return new JsonArray(elements);
+  /**
+   * Returns a {@link JsonValue.JsonNumber} from the previously consumed number token.
+   *
+   * @return the parsed {@link JsonValue.JsonNumber}
+   */
+  private JsonNumber parseJsonNumber() {
+    Token token = previous();
+    return new JsonNumber((Double) (token.literal()));
+  }
 
-        do {
-            JsonValue value = value();
-            elements.add(value);
+  /**
+   * Returns a {@link JsonValue.JsonBoolean} from the previously consumed boolean token.
+   *
+   * @return the parsed {@link JsonValue.JsonBoolean}
+   */
+  private JsonBoolean parseJsonBoolean() {
+    Token token = previous();
+    if (token.type() == TRUE) return new JsonBoolean(true);
+    if (token.type() == FALSE) return new JsonBoolean(false);
 
-        } while (match(COMMA));
+    return new JsonBoolean(false);
+  }
 
-        consume(RIGHT_BRACKET, "Expected a ']'");
-
-        return new JsonArray(elements);
-    }
-
-    /**
-     * Returns a {@link JsonValue.JsonString} from the previously consumed string
-     * token.
-     *
-     * @return the parsed {@link JsonValue.JsonString}
-     */
-    private JsonString parseJsonString() {
-
-        Token token = previous();
-
-        return new JsonString((String) token.literal());
-
-    }
-
-    /**
-     * Returns a {@link JsonValue.JsonNumber} from the previously consumed number
-     * token.
-     *
-     * @return the parsed {@link JsonValue.JsonNumber}
-     */
-    private JsonNumber parseJsonNumber() {
-        Token token = previous();
-        return new JsonNumber((Double) (token.literal()));
-    }
-
-    /**
-     * Returns a {@link JsonValue.JsonBoolean} from the previously consumed boolean
-     * token.
-     *
-     * @return the parsed {@link JsonValue.JsonBoolean}
-     */
-    private JsonBoolean parseJsonBoolean() {
-        Token token = previous();
-        if (token.type() == TRUE)
-            return new JsonBoolean(true);
-        if (token.type() == FALSE)
-            return new JsonBoolean(false);
-
-        return new JsonBoolean(false);
-
-    }
-
-    /**
-     * Returns a {@link JsonValue.JsonNull} instance.
-     *
-     * @return a new {@link JsonValue.JsonNull}
-     */
-    private JsonNull parseJsonNull() {
-        return new JsonNull();
-    }
+  /**
+   * Returns a {@link JsonValue.JsonNull} instance.
+   *
+   * @return a new {@link JsonValue.JsonNull}
+   */
+  private JsonNull parseJsonNull() {
+    return new JsonNull();
+  }
 }
